@@ -161,7 +161,21 @@ body:has(#sea0.open) #nebula-sea0-brand, body:has(#sea0.open) .Form_formMainCont
 #sea0.s0-drag-over .s0-drop-hint{display:flex}
 #sea0[data-bg="custom"] .s0-video{display:none}
 @media(max-width:640px){#sea0 .s0-floating-clock{right:14px;bottom:14px;padding:9px 12px}#sea0 .s0-floating-time{font-size:20px}}
+
 @media(max-width:640px){#sea0 .s0-settings-panel{top:76px;right:12px}}
+#sea0 .s0-admin-panel{position:absolute;z-index:25;top:88px;right:22px;width:min(390px,calc(100vw - 28px));padding:20px;border-radius:20px;background:rgba(10,13,20,.97);border:1px solid rgba(255,255,255,.22);box-shadow:0 18px 60px #0009;color:#fff}
+#sea0 .s0-admin-panel[hidden],#sea0 .s0-alert[hidden]{display:none}
+#sea0 .s0-admin-panel h2{font:700 18px "Unbounded",system-ui,sans-serif;margin:0}
+#sea0 .s0-admin-panel label{display:block;font-size:12px;font-weight:700;color:#cbd5e1;margin:13px 0 6px}
+#sea0 .s0-admin-panel input,#sea0 .s0-admin-panel textarea{box-sizing:border-box;width:100%;padding:11px 12px;border-radius:10px;border:1px solid #ffffff38;background:#1b2230;color:white;font:inherit}
+#sea0 .s0-admin-panel textarea{min-height:85px;resize:vertical}
+#sea0 .s0-admin-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:14px}
+#sea0 .s0-alert{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.88);text-align:center;color:#fff}
+#sea0 .s0-alert-card{width:min(650px,100%);padding:32px 24px;border:1px solid #ff525277;border-radius:22px;background:linear-gradient(145deg,#261014,#090b10);box-shadow:0 0 55px #ff172c55}
+#sea0 .s0-alert-card h2{font:700 clamp(22px,4vw,34px) "Unbounded",system-ui,sans-serif;color:#ff626d;margin:0 0 18px}
+#sea0 .s0-alert-message{font-size:clamp(16px,2vw,22px);line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+#sea0 .s0-alert-card small{display:block;margin-top:18px;color:#aab3c2}
+@media(max-width:640px){#sea0 .s0-admin-panel{top:76px;right:12px}}
 </style>
 
 <div id="sea0" role="dialog" aria-label="SEA0" aria-hidden="true">
@@ -174,6 +188,7 @@ body:has(#sea0.open) #nebula-sea0-brand, body:has(#sea0.open) .Form_formMainCont
       <h1 class="s0-title">SEA0</h1>
       <input class="s0-search" type="search" placeholder="Search games" aria-label="Search games">
       <button class="s0-btn" id="s0-settings-open" type="button" aria-expanded="false" aria-controls="s0-settings">Settings</button>
+      <button class="s0-btn" id="s0-admin-open" type="button">Admin Panel</button>
       <button class="s0-btn" id="s0-close" type="button">Close</button>
     </header>
     <section class="s0-main glass"><div class="s0-grid" id="s0-grid"></div></section>
@@ -183,6 +198,27 @@ body:has(#sea0.open) #nebula-sea0-brand, body:has(#sea0.open) .Form_formMainCont
     <div class="s0-floating-date" id="s0-floating-date">Loading…</div>
   </div>
   <div class="s0-drop-hint" id="s0-drop-hint" aria-hidden="true"><div><strong>Drop an image to set your background</strong><span>PNG, JPG, GIF, or WebP</span></div></div>
+  <aside class="s0-admin-panel" id="s0-admin-panel" role="dialog" aria-label="Admin panel" hidden>
+    <div class="s0-settings-head"><h2>Admin Panel</h2><button class="s0-btn" id="s0-admin-close" type="button">Close</button></div>
+    <div id="s0-admin-login">
+      <label for="s0-admin-password">Admin password</label>
+      <input id="s0-admin-password" type="password" autocomplete="off" placeholder="Enter admin code">
+      <div class="s0-admin-actions"><button class="s0-btn" id="s0-admin-unlock" type="button">Unlock</button></div>
+      <small id="s0-admin-error" style="color:#ff818b"></small>
+    </div>
+    <div id="s0-admin-controls" hidden>
+      <label for="s0-alert-text">Alert message</label>
+      <textarea id="s0-alert-text" maxlength="500" placeholder="Write an announcement for players..."></textarea>
+      <label for="s0-alert-duration">Show alert for (seconds)</label>
+      <input id="s0-alert-duration" type="number" min="1" max="300" value="10">
+      <label style="display:flex;align-items:center;gap:9px"><input id="s0-alert-kick" type="checkbox" checked style="width:auto"> Close the active game when alert appears</label>
+      <div class="s0-admin-actions"><button class="s0-btn" id="s0-alert-send" type="button">Send alert</button></div>
+      <small style="display:block;color:#aab3c2;margin-top:10px">Alerts reach this page and compatible open tabs on the same browser origin, not other people's devices.</small>
+    </div>
+  </aside>
+  <div class="s0-alert" id="s0-alert" role="alert" aria-live="assertive" hidden>
+    <div class="s0-alert-card"><h2>ADMIN ALERT</h2><div class="s0-alert-message" id="s0-alert-message"></div><small id="s0-alert-countdown"></small></div>
+  </div>
   <aside class="s0-settings-panel" id="s0-settings" role="dialog" aria-label="SEA0 settings" hidden>
     <div class="s0-settings-head"><h2>Settings</h2><button class="s0-btn" id="s0-settings-close" type="button">Done</button></div>
     <div class="s0-setting"><label>Current time</label><div class="s0-clock"><div class="s0-clock-time" id="s0-clock-time">--:--:--</div><div class="s0-clock-date" id="s0-clock-date">Loading date…</div></div></div>
@@ -208,6 +244,92 @@ body:has(#sea0.open) #nebula-sea0-brand, body:has(#sea0.open) .Form_formMainCont
   var root=document.getElementById("sea0"),grid=document.getElementById("s0-grid"),
       search=root.querySelector(".s0-search"),player=document.getElementById("s0-player"),
       frame=document.getElementById("s0-frame"),video=root.querySelector("video"),music=document.getElementById("s0-music-audio");
+  // Manual admin announcements are local to this browser origin; scheduled global announcements use announcement.json.
+  var adminPanel=document.getElementById("s0-admin-panel"),
+      adminOpen=document.getElementById("s0-admin-open"),
+      adminLogin=document.getElementById("s0-admin-login"),
+      adminControls=document.getElementById("s0-admin-controls"),
+      adminPassword=document.getElementById("s0-admin-password"),
+      adminError=document.getElementById("s0-admin-error"),
+      alertText=document.getElementById("s0-alert-text"),
+      alertDuration=document.getElementById("s0-alert-duration"),
+      alertKick=document.getElementById("s0-alert-kick"),
+      alertBox=document.getElementById("s0-alert"),
+      alertMessage=document.getElementById("s0-alert-message"),
+      alertCountdown=document.getElementById("s0-alert-countdown"),
+      alertTimer=null,countdownTimer=null;
+  var ADMIN_CODE="Wp34005^";
+  function closeAdmin(){adminPanel.hidden=true;}
+  adminOpen.addEventListener("click",function(){adminPanel.hidden=!adminPanel.hidden;});
+  document.getElementById("s0-admin-close").addEventListener("click",closeAdmin);
+  document.getElementById("s0-admin-unlock").addEventListener("click",function(){
+    if(adminPassword.value===ADMIN_CODE){adminLogin.hidden=true;adminControls.hidden=false;adminError.textContent="";}
+    else{adminError.textContent="Incorrect admin code.";adminPassword.select();}
+  });
+  adminPassword.addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("s0-admin-unlock").click();});
+  function playAdminAlarm(){
+    try{
+      var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+      var ctx=new Ctx();if(ctx.state==="suspended")ctx.resume();
+      [0,0.28,0.56,0.84].forEach(function(t){
+        var osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.type="square";osc.frequency.value=t%0.56===0?880:660;
+        gain.gain.setValueAtTime(0.0001,ctx.currentTime+t);
+        gain.gain.exponentialRampToValueAtTime(0.22,ctx.currentTime+t+0.025);
+        gain.gain.setValueAtTime(0.22,ctx.currentTime+t+0.16);
+        gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.23);
+        osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+t);osc.stop(ctx.currentTime+t+0.24);
+      });
+      setTimeout(function(){ctx.close();},1800);
+    }catch(e){}
+  }
+  function showAdminAlert(payload){
+    if(!payload||typeof payload.message!=="string")return;
+    var seconds=Math.max(1,Math.min(300,Number(payload.duration)||10));
+    if(payload.kick){closeGame();}
+    alertMessage.textContent=payload.message;
+    alertBox.hidden=false;playAdminAlarm();
+    clearInterval(countdownTimer);clearTimeout(alertTimer);
+    var until=Date.now()+seconds*1000;
+    function tick(){var left=Math.max(0,Math.ceil((until-Date.now())/1000));alertCountdown.textContent="This alert will close in "+left+" second"+(left===1?"":"s")+".";
+      if(left<=0){clearInterval(countdownTimer);alertBox.hidden=true;}}
+    tick();countdownTimer=setInterval(tick,250);
+    alertTimer=setTimeout(function(){alertBox.hidden=true;clearInterval(countdownTimer);},seconds*1000);
+  }
+  // Global daily announcement: GitHub Actions updates announcement.json in the repository.
+  // GitHub Pages serves that file to every visitor; poll for the current New York date.
+  var dailyAnnouncementSeen = null;
+  function newYorkDate(){
+    try{return new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());}
+    catch(e){return "";}
+  }
+  function checkDailyAnnouncement(){
+    fetch("announcement.json?cache="+Date.now(),{cache:"no-store"})
+      .then(function(r){if(!r.ok)throw new Error("announcement unavailable");return r.json();})
+      .then(function(data){
+        if(!data||!data.event_id||!data.message||data.date!==newYorkDate())return;
+        var seenKey="sea0-daily-announcement-seen";
+        var seen=null;try{seen=localStorage.getItem(seenKey);}catch(e){}
+        if(seen===data.event_id||dailyAnnouncementSeen===data.event_id)return;
+        dailyAnnouncementSeen=data.event_id;
+        try{localStorage.setItem(seenKey,data.event_id);}catch(e){}
+        showAdminAlert({message:data.message,duration:data.duration||15,kick:!!data.kick,nonce:data.event_id});
+      })
+      .catch(function(){});
+  }
+  checkDailyAnnouncement();
+  setInterval(checkDailyAnnouncement,30000);
+
+  var adminChannel=null;
+  try{if("BroadcastChannel" in window){adminChannel=new BroadcastChannel("sea0-admin-alerts");adminChannel.onmessage=function(e){showAdminAlert(e.data);};}}catch(e){}
+  window.addEventListener("storage",function(e){if(e.key==="sea0-admin-alert"&&e.newValue){try{showAdminAlert(JSON.parse(e.newValue));}catch(err){}}});
+  document.getElementById("s0-alert-send").addEventListener("click",function(){
+    var message=alertText.value.trim();if(!message){alertText.focus();return;}
+    var payload={message:message,duration:Math.max(1,Math.min(300,Number(alertDuration.value)||10)),kick:alertKick.checked,nonce:Date.now()+Math.random()};
+    showAdminAlert(payload);
+    try{if(adminChannel)adminChannel.postMessage(payload);localStorage.setItem("sea0-admin-alert",JSON.stringify(payload));}catch(e){}
+    closeAdmin();
+  });
   window.addEventListener("message",function(e){var d=e.data;if(e.source!==frame.contentWindow||!d||d.type!=="SEA0_ACHIEVEMENT"||d.id!=="100K!"||d.unlocked!==true)return;try{var a=JSON.parse(localStorage.getItem("sea0-achievements")||"{}");if(!a["100K!"])a["100K!"]={unlocked:true,at:d.at||Date.now()};localStorage.setItem("sea0-achievements",JSON.stringify(a));}catch(err){}});
 
   // Settings: live clock, selectable time zone, and background presets.
